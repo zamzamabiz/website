@@ -15,7 +15,13 @@ router.get('/', async (req, res) => {
 // POST /api/news - add new article
 router.post('/', async (req, res) => {
   const { title, content, date } = req.body;
-  const article = new News({ title, content, date });
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    return res.status(400).json({ message: 'title is required and must be a non-empty string' });
+  }
+  if (!content || typeof content !== 'string' || !content.trim()) {
+    return res.status(400).json({ message: 'content is required and must be a non-empty string' });
+  }
+  const article = new News({ title: title.trim(), content: content.trim(), date });
   try {
     const newArticle = await article.save();
     res.status(201).json(newArticle);
